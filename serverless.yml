@@ -1,0 +1,66 @@
+# Welcome to Serverless!
+#
+# This file is the main config file for your service.
+# It's very minimal at this point and uses default values.
+# You can always add more config options for more control.
+# We've included some commented out config examples here.
+# Just uncomment any of them to get that config option.
+#
+# For full config options, check the docs:
+#    docs.serverless.com
+#
+# Happy Coding!
+
+service: news-api
+# app and org for use with dashboard.serverless.com
+app: presidential-news-api
+org: nbroad1881
+
+# You can pin your service to only deploy with a specific Serverless version
+# Check out our docs for more details
+# frameworkVersion: "=X.X.X"
+
+provider:
+  name: aws
+  runtime: python3.7
+
+# you can overwrite defaults here
+  stage: dev
+  region: us-east-1
+
+# you can add statements to the Lambda function's IAM Role here
+  iamRoleStatements:
+    - Effect: Allow
+      Action:
+        - s3:PutObject
+      Resource: "arn:aws:s3:::news-api-presidential/*"
+
+# you can define service wide environment variables here
+  environment:
+    NEWS_API_KEY_1: ${param:news-api-key-1}
+    NEWS_API_KEY_2: ${param:news-api-key-2}
+    NEWS_API_KEY_3: ${param:news-api-key-3}
+    BUCKET_NAME: ${param:news-api-s3-bucket-name}
+
+cfnRole: ${param:cfnRole}
+timeout: 60
+
+package:
+  include:
+    - handler.py
+    - news.py
+  exclude:
+    - venv/**
+    - news-api-layer.zip
+    - requirements.txt
+    - tests/**
+
+functions:
+  main:
+    handler: handler.main
+    layers:
+      - ${param:news-api-layer-arn}
+    events:
+      - schedule: rate(1 hour)
+
+
