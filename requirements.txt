@@ -3,4 +3,4 @@ chardet==3.0.4
 idna==3.7
 newsapi-python==0.2.6
 requests==2.32.0
-urllib3==1.26.5
+urllib3==1.26.19
